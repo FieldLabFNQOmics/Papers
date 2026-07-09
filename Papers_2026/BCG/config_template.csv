@@ -1,0 +1,12 @@
+[gene-expression],,,,
+reference,/path/to/refdata-gex-mm10-2020-A/,,,
+r1-length,151,,,
+r2-length,151,,,
+chemistry,auto,,,
+expect-cells,5000,,,
+no-secondary,FALSE,,,
+create-bam,TRUE,,,
+probe-set,/path/to/Chromium_Mouse_Transcriptome_Probe_Set_v1.0.1_mm10-2020-A.csv
+[libraries],,,,
+fastq_id,fastqs,lanes,feature_types,subsample_rate
+SAMPLE_ID,/path/to/fastqs/,any,gene expression,

@@ -1,0 +1,23 @@
+#!/bin/bash
+# Run Cell Ranger `multi` for a single 10x sample under PBS.
+#
+# Usage:
+#   qsub -v input=SAMPLE_ID cellranger_multi.qsub
+# where SAMPLE_ID.csv is a Cell Ranger `multi` config file in the working
+# directory (see config_template.csv). One job is submitted per sample.
+#
+# Adjust the PBS project code, storage mounts, and resource requests to suit
+# your HPC environment.
+
+#PBS -P PROJECT_CODE
+#PBS -q normal
+#PBS -l walltime=24:00:00,mem=128GB,jobfs=100GB,ncpus=12
+#PBS -l storage=STORAGE_MOUNTS
+
+cd /path/to/working/dir/
+
+cellranger multi \
+    --id="$input" \
+    --localcores=12 \
+    --localmem=128 \
+    --csv "$input".csv
