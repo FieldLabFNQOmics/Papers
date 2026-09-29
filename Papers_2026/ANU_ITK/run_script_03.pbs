@@ -1,0 +1,27 @@
+#!/bin/bash
+# Runs 03_combine_captures.R.
+# Submit: qsub new_scripts/run_script_03.pbs
+
+#PBS -P PROJECT_CODE
+#PBS -q normalbw
+#PBS -l ncpus=8
+#PBS -l mem=128GB
+#PBS -l walltime=03:00:00
+#PBS -l storage=gdata/PROJECT_CODE
+#PBS -l wd
+#PBS -r y
+#PBS -N combine_03
+
+set -euo pipefail
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+
+cd /path/to/project_root
+module load R/4.3.1   # adjust to your Gadi R module
+
+echo "=== run_script_03.pbs"
+echo "=== host: $(hostname), date: $(date -u +%FT%TZ)"
+
+Rscript new_scripts/03_combine_captures.R

@@ -1,0 +1,36 @@
+#!/bin/bash
+# Runs 07a_pathway_ucell_scores.R.
+# Submit: qsub new_scripts/run_script_07a.pbs
+#   -v FORCE=1                      ignore the UCell score cache
+#   -v EXTRA_ARGS="--no-pdf ..."     extra options for the R script
+
+#PBS -P PROJECT_CODE
+#PBS -q normalbw
+#PBS -l ncpus=1
+#PBS -l mem=192GB
+#PBS -l walltime=06:00:00
+#PBS -l storage=gdata/PROJECT_CODE
+#PBS -l wd
+#PBS -r y
+#PBS -N ucell07a
+
+set -euo pipefail
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+
+cd /path/to/project_root
+module load R/4.3.1   # adjust to your Gadi R module
+
+EXTRA_ARGS="${EXTRA_ARGS:-}"
+if [[ "${FORCE:-0}" == "1" ]]; then
+  EXTRA_ARGS="$EXTRA_ARGS --force"
+  echo "=== FORCE=1 - ignoring the UCell score cache"
+fi
+
+echo "=== run_script_07a.pbs"
+echo "=== host: $(hostname), date: $(date -u +%FT%TZ)"
+echo "=== args: ${EXTRA_ARGS}"
+
+Rscript new_scripts/07a_pathway_ucell_scores.R ${EXTRA_ARGS}

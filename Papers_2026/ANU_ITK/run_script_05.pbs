@@ -1,0 +1,45 @@
+#!/bin/bash
+# Runs one 05_differential_expression.R task per array element.
+# Submit: qsub -J 1-10 new_scripts/run_script_05.pbs  (arrays of up to 10 on Gadi)
+#   -v FORCE=1       re-run tasks whose output exists
+#   -v GSEA_ONLY=1   redo GSEA only, from existing DE tables
+
+#PBS -P PROJECT_CODE
+#PBS -q normalbw
+#PBS -l ncpus=8
+#PBS -l mem=40GB
+#PBS -l walltime=08:00:00
+#PBS -l storage=gdata/PROJECT_CODE
+#PBS -l wd
+#PBS -r y
+#PBS -N de_task
+
+set -euo pipefail
+
+export OMP_NUM_THREADS=1
+export OPENBLAS_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+
+cd /path/to/project_root
+module load R/4.3.1   # adjust to your Gadi R module
+
+if [[ -z "${PBS_ARRAY_INDEX:-}" ]]; then
+  echo "ERROR: PBS_ARRAY_INDEX is unset - submit with qsub -J <range> ..." >&2
+  exit 1
+fi
+
+echo "=== run_script_05.pbs: array index = $PBS_ARRAY_INDEX"
+echo "=== host: $(hostname), date: $(date -u +%FT%TZ)"
+
+EXTRA_ARGS=""
+if [[ "${FORCE:-0}" == "1" ]]; then
+  EXTRA_ARGS="$EXTRA_ARGS --force"
+  echo "=== FORCE=1 is set - passing --force through to Rscript"
+fi
+
+if [[ "${GSEA_ONLY:-0}" == "1" ]]; then
+  EXTRA_ARGS="$EXTRA_ARGS --gsea-only"
+  echo "=== GSEA_ONLY=1 is set - passing --gsea-only through to Rscript"
+fi
+
+Rscript new_scripts/05_differential_expression.R --task "$PBS_ARRAY_INDEX" ${EXTRA_ARGS}
